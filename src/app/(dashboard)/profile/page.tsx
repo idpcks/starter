@@ -7,10 +7,15 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { UserPermissions } from '@/components/auth/UserPermissions';
+import { usePageTitle } from '@/lib/hooks/usePageTitle';
+import { useLanguage } from '@/components/LanguageProvider';
 
 export default function ProfilePage() {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
+  
+  usePageTitle({ pageTitle: 'Profile' });
   
   const [formData, setFormData] = useState({
     name: session?.user?.name || '',

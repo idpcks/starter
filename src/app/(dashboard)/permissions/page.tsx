@@ -11,10 +11,15 @@ import Alert from '@/components/ui/Alert';
 import { Permission, ROLE_PERMISSIONS } from '@/types/permission';
 import { PermissionGuard } from '@/components/auth/PermissionGuard';
 import { Role } from '@/types/auth';
+import { usePageTitle } from '@/lib/hooks/usePageTitle';
+import { useLanguage } from '@/components/LanguageProvider';
 
 export default function PermissionsPage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const { t } = useLanguage();
+  
+  usePageTitle({ pageTitle: 'Permissions' });
   const [roles, setRoles] = useState<Role[]>([]);
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [rolePermissions, setRolePermissions] = useState<Record<Role, Permission[]>>({} as Record<Role, Permission[]>);

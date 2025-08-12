@@ -115,3 +115,52 @@ export const userQueries = {
     return parseInt(result.rows[0].count);
   }
 };
+
+// App settings queries
+export const appSettingsQueries = {
+  // Get setting by key
+  getByKey: async (key: string) => {
+    const result = await query(
+      'SELECT * FROM app_settings WHERE setting_key = $1',
+      [key]
+    );
+    return result.rows[0];
+  },
+
+  // Get all settings
+  getAll: async () => {
+    const result = await query('SELECT * FROM app_settings ORDER BY setting_key');
+    return result.rows;
+  },
+
+  // Set setting value
+  set: async (key: string, value: string) => {
+    const result = await query(
+      `INSERT INTO app_settings (setting_key, setting_value, updated_at) 
+       VALUES ($1, $2, NOW()) 
+       ON CONFLICT (setting_key) 
+       DO UPDATE SET setting_value = $2, updated_at = NOW() 
+       RETURNING *`,
+      [key, value]
+    );
+    return result.rows[0];
+  },
+
+  // Delete setting
+  delete: async (key: string) => {
+    const result = await query(
+      'DELETE FROM app_settings WHERE setting_key = $1 RETURNING *',
+      [key]
+    );
+    return result.rows[0];
+  },
+
+  // Get multiple settings by keys
+  getByKeys: async (keys: string[]) => {
+    const result = await query(
+      'SELECT * FROM app_settings WHERE setting_key = ANY($1)',
+      [keys]
+    );
+    return result.rows;
+  }
+};

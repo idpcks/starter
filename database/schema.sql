@@ -82,6 +82,16 @@ CREATE TABLE IF NOT EXISTS user_permissions (
     UNIQUE(user_id, permission_id)
 );
 
+-- App settings table
+CREATE TABLE IF NOT EXISTS app_settings (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    setting_key VARCHAR(100) UNIQUE NOT NULL,
+    setting_value TEXT,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
@@ -89,6 +99,7 @@ CREATE INDEX IF NOT EXISTS idx_sessions_session_token ON sessions(session_token)
 CREATE INDEX IF NOT EXISTS idx_accounts_user_id ON accounts(user_id);
 CREATE INDEX IF NOT EXISTS idx_role_permissions_role ON role_permissions(role);
 CREATE INDEX IF NOT EXISTS idx_user_permissions_user_id ON user_permissions(user_id);
+CREATE INDEX IF NOT EXISTS idx_app_settings_key ON app_settings(setting_key);
 
 -- Insert default permissions
 INSERT INTO permissions (name, description) VALUES 
@@ -113,14 +124,21 @@ SELECT 'ADMIN', id FROM permissions
 ON CONFLICT (role, permission_id) DO NOTHING;
 
 INSERT INTO role_permissions (role, permission_id) 
-SELECT 'MANAGER', id FROM permissions WHERE name IN ('users.read', 'users.write')
+SELECT 'MANAGER', id FROM permissions WHERE name IN ('users.read', 'users.write', 'view_settings')
 ON CONFLICT (role, permission_id) DO NOTHING;
 
 INSERT INTO role_permissions (role, permission_id) 
-SELECT 'USER', id FROM permissions WHERE name = 'users.read'
+SELECT 'USER', id FROM permissions WHERE name IN ('users.read', 'view_settings')
 ON CONFLICT (role, permission_id) DO NOTHING;
 
 -- Create default admin user (password: admin123)
 INSERT INTO users (email, password, name, role) VALUES 
-    ('admin@example.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/RK.s5uIfy', 'Admin User', 'ADMIN')
+    ('admin@example.com', '$2b$10$9igVfzaYW4X5GFzZSAiIq.oXs4N6Am1aNkp8lrk4A8hbfdow0yoAe', 'Admin User', 'ADMIN')
 ON CONFLICT (email) DO NOTHING;
+
+-- Insert default app settings
+INSERT INTO app_settings (setting_key, setting_value, description) VALUES 
+    ('app_title', 'NextJS Starter Kit', 'Application title displayed in browser and UI'),
+    ('app_logo_url', '', 'URL for custom application logo'),
+    ('app_logo_enabled', 'false', 'Whether custom logo is enabled')
+ON CONFLICT (setting_key) DO NOTHING;

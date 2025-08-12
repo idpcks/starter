@@ -7,10 +7,15 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { Permission, ROLE_PERMISSIONS, Role } from '@/types/permission';
 import { PermissionGuard } from '@/components/auth/PermissionGuard';
+import { usePageTitle } from '@/lib/hooks/usePageTitle';
+import { useLanguage } from '@/components/LanguageProvider';
 
 export default function RolePermissionsPage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const { t } = useLanguage();
+  
+  usePageTitle({ pageTitle: 'Role Permissions' });
   const [selectedRole, setSelectedRole] = useState<Role>('USER');
   const [rolePermissions, setRolePermissions] = useState<Permission[]>([]);
   const [allPermissions, setAllPermissions] = useState<Permission[]>([]);

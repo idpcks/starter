@@ -41,7 +41,7 @@ export default function UsersPage() {
   const router = useRouter();
   const { t } = useLanguage();
   
-  usePageTitle({ pageTitle: t('page_admin') });
+  usePageTitle({ pageTitle: 'Admin Users' });
   const [users, setUsers] = useState<User[]>([]);
   const [pagination, setPagination] = useState<Pagination>({
     page: 1,

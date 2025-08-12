@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { withPermission } from '@/components/auth/withPermission';
+import { PermissionCheck } from '@/components/auth/PermissionCheck';
 import { Permission } from '@/types/permission';
 import { useTheme } from '@/components/ThemeProvider';
 import { useLanguage } from '@/components/LanguageProvider';
@@ -13,6 +14,7 @@ import { useLogo } from '@/components/LogoProvider';
 import Input from '@/components/ui/Input';
 import Switch from '@/components/ui/Switch';
 import { usePageTitle } from '@/lib/hooks/usePageTitle';
+import { usePermission } from '@/lib/hooks/usePermission';
 
 function SettingsPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +22,7 @@ function SettingsPage() {
   const { language, setLanguage, t } = useLanguage();
   const { appTitle, setAppTitle } = useAppTitle();
   const { logoUrl, isLogoEnabled, setLogoUrl, setIsLogoEnabled, resetToDefault, getCurrentLogo } = useLogo();
+  const { can } = usePermission();
   
   usePageTitle({ pageTitle: t('page_settings') });
   const [tempAppTitle, setTempAppTitle] = useState(appTitle);
@@ -64,30 +67,33 @@ function SettingsPage() {
     setLanguage(e.target.value as any);
   };
 
-  const handleSaveSettings = () => {
+  const handleSaveSettings = async () => {
     setIsLoading(true);
     
-    // Save app title
-    if (tempAppTitle.trim() && tempAppTitle !== appTitle) {
-      setAppTitle(tempAppTitle.trim());
-    }
-    
-    // Save logo settings
-    setIsLogoEnabled(tempLogoEnabled);
-    if (tempLogoUrl.trim()) {
-      setLogoUrl(tempLogoUrl.trim());
-    } else if (!tempLogoEnabled) {
-      setLogoUrl(null);
-    }
-    
-    // Save settings to localStorage
-    localStorage.setItem('userSettings', JSON.stringify(settings));
-    
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Save app title
+      if (tempAppTitle.trim() && tempAppTitle !== appTitle) {
+        await setAppTitle(tempAppTitle.trim());
+      }
+      
+      // Save logo settings
+      await setIsLogoEnabled(tempLogoEnabled);
+      if (tempLogoUrl.trim()) {
+        await setLogoUrl(tempLogoUrl.trim());
+      } else if (!tempLogoEnabled) {
+        await setLogoUrl(null);
+      }
+      
+      // Save settings to localStorage
+      localStorage.setItem('userSettings', JSON.stringify(settings));
+      
       toast.success(t('settings_saved'));
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      toast.error('Failed to save settings. Please try again.');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -102,46 +108,95 @@ function SettingsPage() {
       <div className="grid grid-cols-1 gap-6">
         <Card title={t('application_settings')}>
           <div className="space-y-4">
-            <div>
-              <Input
-                label={t('application_title')}
-                value={tempAppTitle}
-                onChange={(e) => setTempAppTitle(e.target.value)}
-                placeholder={t('application_title')}
-                className="max-w-md"
-              />
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {t('application_title_description')}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        <Card title={t('logo_settings')}>
-          <div className="space-y-4">
-            <div>
-              <Switch
-                checked={tempLogoEnabled}
-                onChange={setTempLogoEnabled}
-                label={t('enable_custom_logo')}
-                className="mb-4"
-              />
-            </div>
-            
-            {tempLogoEnabled && (
+            <PermissionCheck permission={Permission.EDIT_SETTINGS}>
               <div>
                 <Input
-                  label={t('logo_url')}
-                  value={tempLogoUrl}
-                  onChange={(e) => setTempLogoUrl(e.target.value)}
-                  placeholder={t('logo_url_placeholder')}
+                  label={t('application_title')}
+                  value={tempAppTitle}
+                  onChange={(e) => setTempAppTitle(e.target.value)}
+                  placeholder={t('application_title')}
                   className="max-w-md"
                 />
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  {t('logo_url_description')}
+                  {t('application_title_description')}
                 </p>
               </div>
+            </PermissionCheck>
+            <PermissionCheck permission={Permission.EDIT_SETTINGS}>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                <strong>{t('current_title')}:</strong> {appTitle}
+              </div>
+            </PermissionCheck>
+          </div>
+        </Card>
+
+        <PermissionCheck permission={Permission.EDIT_SETTINGS}>
+          <Card title={t('logo_settings')}>
+          <div className="space-y-4">
+            <PermissionCheck permission={Permission.EDIT_SETTINGS}>
+              <div>
+                <Switch
+                  checked={tempLogoEnabled}
+                  onChange={setTempLogoEnabled}
+                  label={t('enable_custom_logo')}
+                  className="mb-4"
+                />
+              </div>
+            </PermissionCheck>
+            
+            <PermissionCheck permission={Permission.EDIT_SETTINGS}>
+              {tempLogoEnabled && (
+                <div>
+                  <Input
+                    label={t('logo_url')}
+                    value={tempLogoUrl}
+                    onChange={(e) => setTempLogoUrl(e.target.value)}
+                    placeholder={t('logo_url_placeholder')}
+                    className="max-w-md"
+                  />
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  {t('logo_url_description')}
+                </p>
+                
+                {/* Panduan Penggunaan Logo */}
+                <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <h5 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
+                    📋 Panduan Penggunaan Logo
+                  </h5>
+                  <ul className="text-xs text-blue-800 dark:text-blue-200 space-y-1">
+                    <li>• <strong>Format yang didukung:</strong> PNG, JPG, JPEG, SVG, WebP</li>
+                    <li>• <strong>Ukuran disarankan:</strong> 200x200px hingga 500x500px</li>
+                    <li>• <strong>Rasio aspek:</strong> 1:1 (persegi) atau 16:9 (landscape)</li>
+                    <li>• <strong>Ukuran file:</strong> Maksimal 2MB untuk performa optimal</li>
+                    <li>• <strong>Background:</strong> Gunakan background transparan (PNG/SVG) untuk hasil terbaik</li>
+                    <li>• <strong>URL:</strong> Pastikan URL dapat diakses publik (https://)</li>
+                  </ul>
+                  
+                  <div className="mt-3 pt-2 border-t border-blue-200 dark:border-blue-700">
+                    <p className="text-xs text-blue-700 dark:text-blue-300 mb-2">
+                      <strong>💡 Tips:</strong> Logo akan otomatis menyesuaikan ukuran. Jika logo tidak muncul, periksa URL dan pastikan gambar dapat diakses.
+                    </p>
+                    
+                    <div className="mt-2">
+                      <p className="text-xs font-medium text-blue-800 dark:text-blue-200 mb-1">Contoh URL yang valid:</p>
+                      <code className="text-xs bg-blue-100 dark:bg-blue-800 px-2 py-1 rounded text-blue-900 dark:text-blue-100">
+                        https://example.com/logo.png
+                      </code>
+                    </div>
+                    
+                    <div className="mt-2">
+                      <p className="text-xs font-medium text-blue-800 dark:text-blue-200 mb-1">Troubleshooting:</p>
+                      <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-0.5">
+                        <li>• Logo tidak muncul? Cek apakah URL dapat dibuka di browser</li>
+                        <li>• Error CORS? Pastikan server mengizinkan akses lintas domain</li>
+                        <li>• Loading lambat? Gunakan CDN atau kompres ukuran file</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
+            </PermissionCheck>
             
             <div className="mt-4">
               <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
@@ -159,20 +214,23 @@ function SettingsPage() {
                     }}
                   />
                 </div>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setTempLogoUrl('');
-                    setTempLogoEnabled(true);
-                  }}
-                  className="text-sm"
-                >
-                  {t('reset_to_default')}
-                </Button>
+                <PermissionCheck permission={Permission.EDIT_SETTINGS}>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setTempLogoUrl('');
+                      setTempLogoEnabled(true);
+                    }}
+                    className="text-sm"
+                  >
+                    {t('reset_to_default')}
+                  </Button>
+                </PermissionCheck>
               </div>
             </div>
           </div>
         </Card>
+        </PermissionCheck>
 
         <Card title={t('notification_settings')}>
           <div className="space-y-4">
@@ -214,20 +272,21 @@ function SettingsPage() {
 
         <Card title={t('appearance_settings')}>
           <div className="space-y-6">
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <h3 className="text-sm font-medium text-gray-900 dark:text-white">Theme Mode</h3>
-                <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                  themeMode === 'dark'
-                    ? 'bg-gray-800 text-white dark:bg-gray-700'
-                    : themeMode === 'light'
-                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                    : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                }`}>
-                  {themeMode === 'auto' ? 'AUTO' : themeMode === 'light' ? 'LIGHT' : 'DARK'}
-                </span>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Choose your preferred theme or let the system decide</p>
+            <PermissionCheck permission={Permission.VIEW_SETTINGS}>
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">Theme Mode</h3>
+                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                    themeMode === 'dark'
+                      ? 'bg-gray-800 text-white dark:bg-gray-700'
+                      : themeMode === 'light'
+                      ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                      : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                  }`}>
+                    {themeMode === 'auto' ? 'AUTO' : themeMode === 'light' ? 'LIGHT' : 'DARK'}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Choose your preferred theme or let the system decide</p>
               
               <div className="grid grid-cols-3 gap-3">
                 {/* Auto Mode */}
@@ -315,16 +374,24 @@ function SettingsPage() {
                 <option value="indonesian">Indonesian</option>
               </select>
             </div>
+            </PermissionCheck>
           </div>
         </Card>
 
         <div className="flex justify-end">
-          <Button
-            onClick={handleSaveSettings}
-            isLoading={isLoading}
-          >
-            {t('save_settings')}
-          </Button>
+          <PermissionCheck permission={Permission.EDIT_SETTINGS}>
+            <Button
+              onClick={handleSaveSettings}
+              isLoading={isLoading}
+            >
+              {t('save_settings')}
+            </Button>
+          </PermissionCheck>
+          {can(Permission.VIEW_SETTINGS) && !can(Permission.EDIT_SETTINGS) && (
+            <div className="text-sm text-gray-500 dark:text-gray-400 italic">
+              {t('view_only_mode')}
+            </div>
+          )}
         </div>
       </div>
     </div>

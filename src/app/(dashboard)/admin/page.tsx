@@ -17,7 +17,7 @@ export default function AdminPage() {
   const router = useRouter();
   const { t } = useLanguage();
   
-  usePageTitle({ pageTitle: t('page_admin') });
+  usePageTitle({ pageTitle: 'Admin' });
   
   useEffect(() => {
     if (status === 'loading') return;
@@ -37,7 +37,7 @@ export default function AdminPage() {
   if (status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading...</div>
+        <div className="text-lg">{t('loading')}</div>
       </div>
     );
   }
@@ -54,18 +54,18 @@ export default function AdminPage() {
       inactiveUsers: 7
     },
     recentActions: [
-      { id: 1, action: 'User created', user: 'admin', timestamp: '2023-06-15T10:30:00Z' },
-      { id: 2, action: 'Permission updated', user: 'admin', timestamp: '2023-06-14T14:45:00Z' },
-      { id: 3, action: 'User deleted', user: 'admin', timestamp: '2023-06-13T09:15:00Z' },
+      { id: 1, action: t('user_created'), user: 'admin', timestamp: '2023-06-15T10:30:00Z' },
+      { id: 2, action: t('permission_updated'), user: 'admin', timestamp: '2023-06-14T14:45:00Z' },
+      { id: 3, action: t('user_deleted'), user: 'admin', timestamp: '2023-06-13T09:15:00Z' },
     ]
   };
   
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Admin Dashboard</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">{t('admin_dashboard')}</h1>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Advanced administration tools and statistics
+          {t('admin_dashboard_description')}
         </p>
       </div>
       
@@ -73,52 +73,52 @@ export default function AdminPage() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <Card>
           <div className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Database Management</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Manage PostgreSQL database connection and schema</p>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('database_management')}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{t('database_management_description')}</p>
             <a
               href="/admin/database"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Manage Database
+              {t('manage_database')}
             </a>
           </div>
         </Card>
         
         <Card>
           <div className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">User Management</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Create, edit, and manage system users</p>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('user_management')}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{t('user_management_description')}</p>
             <a
               href="/admin/users"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
-              Manage Users
+              {t('manage_users')}
             </a>
           </div>
         </Card>
         
         <Card>
           <div className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Permissions</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Configure role-based permissions</p>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('permissions')}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{t('permissions_description')}</p>
             <a
               href="/permissions"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
-              Manage Permissions
+              {t('manage_permissions')}
             </a>
           </div>
         </Card>
         
         <Card>
           <div className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">System Settings</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Configure application settings</p>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('system_settings')}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{t('system_settings_description')}</p>
             <button
               disabled
               className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 cursor-not-allowed"
             >
-              Coming Soon
+              {t('coming_soon')}
             </button>
           </div>
         </Card>
@@ -127,40 +127,40 @@ export default function AdminPage() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
           <div className="flex flex-col items-center">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Total Users</h3>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t('total_users')}</h3>
             <p className="text-3xl font-bold mt-2 text-gray-900 dark:text-white">{adminData.stats.totalUsers}</p>
           </div>
         </Card>
         
         <Card>
           <div className="flex flex-col items-center">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Active Users</h3>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t('active_users')}</h3>
             <p className="text-3xl font-bold mt-2 text-green-600 dark:text-green-400">{adminData.stats.activeUsers}</p>
           </div>
         </Card>
         
         <Card>
           <div className="flex flex-col items-center">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Inactive Users</h3>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t('inactive_users')}</h3>
             <p className="text-3xl font-bold mt-2 text-red-600 dark:text-red-400">{adminData.stats.inactiveUsers}</p>
           </div>
         </Card>
       </div>
       
       <div className="mt-8">
-        <Card title="Recent Admin Actions">
+        <Card title={t('recent_admin_actions')}>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Action
+                    {t('action')}
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    User
+                    {t('user')}
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Timestamp
+                    {t('timestamp')}
                   </th>
                 </tr>
               </thead>
