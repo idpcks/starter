@@ -1,11 +1,7 @@
 import type { NextAuthConfig } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { compare } from 'bcryptjs';
-import { Permission, ROLE_PERMISSIONS, Role } from '@/types/permission';
 import { authConfig } from './config';
-// import PostgresAdapter from '@auth/pg-adapter';
-// import { pool } from '../db';
-import { userQueries } from '../database/queries';
+import { authenticateUser } from './auth-actions';
 
 // PostgreSQL database is now used for user management
 
@@ -25,29 +21,10 @@ export const authOptions: NextAuthConfig = {
             return null;
           }
 
-          const user = await userQueries.findByEmail(credentials.email);
+          // Use server action for authentication
+          const user = await authenticateUser(credentials.email, credentials.password);
           
-          if (!user) {
-            return null;
-          }
-
-          const isPasswordValid = await compare(credentials.password as string, user.password);
-
-          if (!isPasswordValid) {
-            return null;
-          }
-
-          // Get permissions based on user role
-          const permissions = ROLE_PERMISSIONS[user.role as Role] || [];
-          
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role as Role,
-            image: user.image,
-            permissions: permissions
-          };
+          return user;
         } catch (error) {
           console.error('Authentication error:', error);
           return null;
@@ -68,7 +45,7 @@ export const authOptions: NextAuthConfig = {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
-        session.user.permissions = token.permissions as Permission[];
+        session.user.permissions = token.permissions as string[];
       }
       return session;
     }

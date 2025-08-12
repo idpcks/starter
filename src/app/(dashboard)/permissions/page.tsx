@@ -67,11 +67,7 @@ export default function PermissionsPage() {
   };
 
   // Redirect non-admin users
-  useEffect(() => {
-    if (session?.user?.role !== 'admin') {
-      router.push('/dashboard');
-    }
-  }, [session, router]);
+
 
   if (isLoading) {
     return (
@@ -82,10 +78,10 @@ export default function PermissionsPage() {
   }
 
   return (
-    <PermissionGuard permission={Permission.MANAGE_USERS} fallback={<Alert type="error" title="Access Denied" message="You don't have permission to access this page" />}>
+    <PermissionGuard permission={Permission.MANAGE_PERMISSIONS} fallback={<Alert type="error" title="Access Denied" message="You don't have permission to access this page" />}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Permissions Management</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Permissions Management</h1>
         </div>
 
         <Card>

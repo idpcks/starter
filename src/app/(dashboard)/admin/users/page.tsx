@@ -10,6 +10,8 @@ import Table from '@/components/ui/Table';
 import Alert from '@/components/ui/Alert';
 import { PermissionGuard } from '@/components/auth/PermissionGuard';
 import { Role, Permission } from '@/types/permission';
+import { usePageTitle } from '@/lib/hooks/usePageTitle';
+import { useLanguage } from '@/components/LanguageProvider';
 
 interface User {
   id: string;
@@ -37,6 +39,9 @@ interface Pagination {
 export default function UsersPage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const { t } = useLanguage();
+  
+  usePageTitle({ pageTitle: t('page_admin') });
   const [users, setUsers] = useState<User[]>([]);
   const [pagination, setPagination] = useState<Pagination>({
     page: 1,
@@ -187,9 +192,9 @@ export default function UsersPage() {
       header: 'Role',
       accessor: (user: User) => (
         <span className={`px-2 py-1 rounded text-xs font-medium ${
-          user.role === 'ADMIN' ? 'bg-red-100 text-red-800' :
-          user.role === 'MANAGER' ? 'bg-yellow-100 text-yellow-800' :
-          'bg-green-100 text-green-800'
+          user.role === 'ADMIN' ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' :
+          user.role === 'MANAGER' ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200' :
+          'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
         }`}>
           {user.role}
         </span>

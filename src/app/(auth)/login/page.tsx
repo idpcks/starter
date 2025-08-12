@@ -11,6 +11,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Alert from '@/components/ui/Alert';
+import { usePageTitle } from '@/lib/hooks/usePageTitle';
+import { useLanguage } from '@/components/LanguageProvider';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,6 +22,9 @@ export default function LoginPage() {
     email: '',
     password: '',
   });
+  const { t } = useLanguage();
+  
+  usePageTitle({ pageTitle: t('page_login') });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -60,14 +65,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex justify-center">
             <Image src="/next.svg" alt="Logo" width={64} height={64} />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">Sign in to your account</h2>
+          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             Or{' '}
             <Link href="/" className="font-medium text-blue-600 hover:text-blue-500">
               go back to home
@@ -142,9 +147,9 @@ export default function LoginPage() {
           </div>
 
           <div className="text-center text-sm">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-blue-800 font-medium mb-2">Demo Credentials:</p>
-              <div className="space-y-1 text-blue-700">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-600 rounded-lg p-4">
+              <p className="text-blue-800 dark:text-blue-300 font-medium mb-2">Demo Credentials:</p>
+              <div className="space-y-1 text-blue-700 dark:text-blue-400">
                 <p><strong>Admin:</strong> admin@example.com / admin123</p>
                 <p><strong>Manager:</strong> manager@example.com / manager123</p>
                 <p><strong>User:</strong> user@example.com / user123</p>

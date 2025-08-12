@@ -11,6 +11,7 @@ export enum Permission {
   
   // Admin permissions
   MANAGE_USERS = 'manage_users',
+  MANAGE_PERMISSIONS = 'manage_permissions',
   VIEW_USERS = 'view_users',
   CREATE_USER = 'create_user',
   EDIT_USER = 'edit_user',
@@ -34,6 +35,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     Permission.EDIT_PROFILE,
     Permission.VIEW_DASHBOARD,
     Permission.MANAGE_USERS,
+    Permission.MANAGE_PERMISSIONS,
     Permission.VIEW_USERS,
     Permission.CREATE_USER,
     Permission.EDIT_USER,
@@ -48,8 +50,13 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     Permission.VIEW_PROFILE,
     Permission.EDIT_PROFILE,
     Permission.VIEW_DASHBOARD,
+    Permission.MANAGE_USERS,
+    Permission.MANAGE_PERMISSIONS,
     Permission.VIEW_USERS,
+    Permission.CREATE_USER,
+    Permission.EDIT_USER,
     Permission.USERS_READ,
+    Permission.USERS_WRITE,
     Permission.VIEW_SETTINGS,
   ],
   USER: [

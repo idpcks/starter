@@ -3,13 +3,16 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { toast } from 'react-toastify';
-import { redirect } from 'next/navigation';
 import { FiEdit2, FiTrash2, FiUserPlus } from 'react-icons/fi';
 
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Table from '@/components/ui/Table';
 import { UserProfile, Role } from '@/types/auth';
+import { PermissionGuard } from '@/components/auth/PermissionGuard';
+import { Permission } from '@/types/permission';
+import { usePageTitle } from '@/lib/hooks/usePageTitle';
+import { useLanguage } from '@/components/LanguageProvider';
 
 // Mock user data
 const mockUsers: UserProfile[] = [
@@ -45,13 +48,11 @@ const mockUsers: UserProfile[] = [
 
 export default function UsersPage() {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const [users, setUsers] = useState<UserProfile[]>(mockUsers);
-  const [isLoading, setIsLoading] = useState(false);
   
-  // Check if user is admin, if not redirect
-  if (session?.user?.role !== ('admin' as Role)) {
-    redirect('/dashboard');
-  }
+  usePageTitle({ pageTitle: t('page_users') });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDeleteUser = (userId: string) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
@@ -89,7 +90,7 @@ export default function UsersPage() {
     {
       header: 'Role',
       accessor: (user: UserProfile) => (
-        <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${user.role === ('admin' as Role) ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>
+        <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${user.role === ('admin' as Role) ? 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200' : 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'}`}>
           {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
         </span>
       ),
@@ -117,32 +118,34 @@ export default function UsersPage() {
   ];
 
   return (
-    <div>
-      <div className="mb-6 flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">User Management</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Manage users and their permissions
-          </p>
+    <PermissionGuard permission={Permission.VIEW_USERS} fallback={<div>You don't have permission to access this page</div>}>
+      <div>
+        <div className="mb-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">User Management</h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              Manage users and their permissions
+            </p>
+          </div>
+          <Button
+            onClick={() => toast.info('Add new user clicked')}
+            className="flex items-center"
+          >
+            <FiUserPlus className="mr-2" />
+            Add User
+          </Button>
         </div>
-        <Button
-          onClick={() => toast.info('Add new user clicked')}
-          className="flex items-center"
-        >
-          <FiUserPlus className="mr-2" />
-          Add User
-        </Button>
-      </div>
 
-      <Card>
-        <Table
-          columns={columns}
-          data={users}
-          keyField="id"
-          isLoading={isLoading}
-          emptyMessage="No users found"
-        />
-      </Card>
-    </div>
+        <Card>
+          <Table
+            columns={columns}
+            data={users}
+            keyField="id"
+            isLoading={isLoading}
+            emptyMessage="No users found"
+          />
+        </Card>
+      </div>
+    </PermissionGuard>
   );
 }

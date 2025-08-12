@@ -1,26 +1,49 @@
-import { redirect } from 'next/navigation';
-import { auth } from '@/auth';
-import { checkPermission } from '@/utils/server-permissions';
+'use client';
+
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { Permission } from '@/types/permission';
 import { Role } from '@/types/auth';
 import Card from '@/components/ui/Card';
+import { usePageTitle } from '@/lib/hooks/usePageTitle';
+import { useLanguage } from '@/components/LanguageProvider';
 
 /**
- * Contoh server component yang menggunakan pemeriksaan izin server-side
+ * Admin dashboard page with client-side permission checking
  */
-export default async function AdminPage() {
-  // Periksa sesi dan izin di server-side
-  const session = await auth();
+export default function AdminPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { t } = useLanguage();
   
-  if (!session) {
-    redirect('/login');
+  usePageTitle({ pageTitle: t('page_admin') });
+  
+  useEffect(() => {
+    if (status === 'loading') return;
+    
+    if (!session) {
+      router.push('/login');
+      return;
+    }
+    
+    // Check if user has admin role
+    if (session.user.role !== 'ADMIN') {
+      router.push('/dashboard');
+      return;
+    }
+  }, [session, status, router]);
+  
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
   }
   
-  // Periksa izin khusus
-  const hasAccess = await checkPermission(Permission.MANAGE_USERS);
-  
-  if (!hasAccess) {
-    redirect('/dashboard');
+  if (!session || session.user.role !== 'ADMIN') {
+    return null;
   }
   
   // Simulasi data admin
@@ -40,8 +63,8 @@ export default async function AdminPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Admin Dashboard</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Admin Dashboard</h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Advanced administration tools and statistics
         </p>
       </div>
@@ -50,8 +73,8 @@ export default async function AdminPage() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <Card>
           <div className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Database Management</h3>
-            <p className="text-sm text-gray-500 mb-4">Manage PostgreSQL database connection and schema</p>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Database Management</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Manage PostgreSQL database connection and schema</p>
             <a
               href="/admin/database"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -63,8 +86,8 @@ export default async function AdminPage() {
         
         <Card>
           <div className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">User Management</h3>
-            <p className="text-sm text-gray-500 mb-4">Create, edit, and manage system users</p>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">User Management</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Create, edit, and manage system users</p>
             <a
               href="/admin/users"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
@@ -76,8 +99,8 @@ export default async function AdminPage() {
         
         <Card>
           <div className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Permissions</h3>
-            <p className="text-sm text-gray-500 mb-4">Configure role-based permissions</p>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Permissions</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Configure role-based permissions</p>
             <a
               href="/permissions"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
@@ -89,11 +112,11 @@ export default async function AdminPage() {
         
         <Card>
           <div className="p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">System Settings</h3>
-            <p className="text-sm text-gray-500 mb-4">Configure application settings</p>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">System Settings</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Configure application settings</p>
             <button
               disabled
-              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-500 bg-gray-100 cursor-not-allowed"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 cursor-not-allowed"
             >
               Coming Soon
             </button>
@@ -104,22 +127,22 @@ export default async function AdminPage() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
           <div className="flex flex-col items-center">
-            <h3 className="text-lg font-medium">Total Users</h3>
-            <p className="text-3xl font-bold mt-2">{adminData.stats.totalUsers}</p>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Total Users</h3>
+            <p className="text-3xl font-bold mt-2 text-gray-900 dark:text-white">{adminData.stats.totalUsers}</p>
           </div>
         </Card>
         
         <Card>
           <div className="flex flex-col items-center">
-            <h3 className="text-lg font-medium">Active Users</h3>
-            <p className="text-3xl font-bold mt-2 text-green-600">{adminData.stats.activeUsers}</p>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Active Users</h3>
+            <p className="text-3xl font-bold mt-2 text-green-600 dark:text-green-400">{adminData.stats.activeUsers}</p>
           </div>
         </Card>
         
         <Card>
           <div className="flex flex-col items-center">
-            <h3 className="text-lg font-medium">Inactive Users</h3>
-            <p className="text-3xl font-bold mt-2 text-red-600">{adminData.stats.inactiveUsers}</p>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Inactive Users</h3>
+            <p className="text-3xl font-bold mt-2 text-red-600 dark:text-red-400">{adminData.stats.inactiveUsers}</p>
           </div>
         </Card>
       </div>

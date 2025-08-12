@@ -22,7 +22,7 @@ export default async function ServerPermissionDisplay() {
         {permissions.map((permission) => (
           <span 
             key={permission} 
-            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
           >
             {permission}
           </span>

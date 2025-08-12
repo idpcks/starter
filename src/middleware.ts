@@ -43,9 +43,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
   
-  // Admin route protection
-  if ((pathname.startsWith('/users') || pathname.startsWith('/permissions') || pathname.startsWith('/role-permissions') || pathname.startsWith('/admin')) && token?.role !== ('admin' as Role)) {
+  // Admin route protection - check for proper role
+  if (pathname.startsWith('/admin') && token?.role !== 'ADMIN') {
     // Redirect non-admin users trying to access admin routes
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+  
+  // Manager+ route protection for user management
+  if ((pathname.startsWith('/users') || pathname.startsWith('/permissions') || pathname.startsWith('/role-permissions')) && 
+      !['ADMIN', 'MANAGER'].includes(token?.role as string)) {
+    // Redirect users without proper permissions
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
   

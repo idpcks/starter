@@ -9,6 +9,8 @@ import Button from '@/components/ui/Button';
 import Alert from '@/components/ui/Alert';
 import { PermissionGuard } from '@/components/auth/PermissionGuard';
 import { Permission } from '@/types/permission';
+import { usePageTitle } from '@/lib/hooks/usePageTitle';
+import { useLanguage } from '@/components/LanguageProvider';
 
 interface DatabaseStatus {
   success: boolean;
@@ -22,6 +24,9 @@ interface DatabaseStatus {
 export default function DatabasePage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const { t } = useLanguage();
+  
+  usePageTitle({ pageTitle: t('page_database') });
   const [status, setStatus] = useState<DatabaseStatus | null>(null);
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(false);
@@ -109,7 +114,7 @@ export default function DatabasePage() {
                   />
                   
                   {status.success && status.timestamp && (
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                       <h3 className="font-semibold mb-2">Connection Details</h3>
                       <p className="text-sm text-gray-600 mb-2">
                         <strong>Last Check:</strong> {new Date(status.timestamp).toLocaleString()}
@@ -123,7 +128,7 @@ export default function DatabasePage() {
                             {status.tables.map((table) => (
                               <span
                                 key={table}
-                                className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded"
+                                className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded"
                               >
                                 {table}
                               </span>
@@ -135,9 +140,9 @@ export default function DatabasePage() {
                   )}
                   
                   {!status.success && status.details && (
-                    <div className="bg-red-50 p-4 rounded-lg">
-                      <h3 className="font-semibold text-red-800 mb-2">Error Details</h3>
-                      <p className="text-sm text-red-600">{status.details}</p>
+                    <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
+                      <h3 className="font-semibold text-red-800 dark:text-red-300 mb-2">Error Details</h3>
+                      <p className="text-sm text-red-600 dark:text-red-400">{status.details}</p>
                     </div>
                   )}
                 </div>
@@ -173,23 +178,23 @@ export default function DatabasePage() {
           <Card title="Database Configuration">
             <div className="space-y-4">
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-semibold mb-3">Environment Variables</h3>
+                <h3 className="font-semibold mb-3 text-gray-900 dark:text-white">Environment Variables</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="font-medium text-gray-700">DB_HOST:</span>
-                    <span className="ml-2 text-gray-600">{process.env.NEXT_PUBLIC_DB_HOST || 'localhost'}</span>
+                    <span className="font-medium text-gray-700 dark:text-gray-300">DB_HOST:</span>
+                    <span className="ml-2 text-gray-600 dark:text-gray-400">{process.env.NEXT_PUBLIC_DB_HOST || 'localhost'}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700">DB_PORT:</span>
-                    <span className="ml-2 text-gray-600">{process.env.NEXT_PUBLIC_DB_PORT || '5432'}</span>
+                    <span className="font-medium text-gray-700 dark:text-gray-300">DB_PORT:</span>
+                    <span className="ml-2 text-gray-600 dark:text-gray-400">{process.env.NEXT_PUBLIC_DB_PORT || '5432'}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700">DB_NAME:</span>
-                    <span className="ml-2 text-gray-600">{process.env.NEXT_PUBLIC_DB_NAME || 'starter_db'}</span>
+                    <span className="font-medium text-gray-700 dark:text-gray-300">DB_NAME:</span>
+                    <span className="ml-2 text-gray-600 dark:text-gray-400">{process.env.NEXT_PUBLIC_DB_NAME || 'starter_db'}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700">DB_USER:</span>
-                    <span className="ml-2 text-gray-600">{process.env.NEXT_PUBLIC_DB_USER || 'postgres'}</span>
+                    <span className="font-medium text-gray-700 dark:text-gray-300">DB_USER:</span>
+                    <span className="ml-2 text-gray-600 dark:text-gray-400">{process.env.NEXT_PUBLIC_DB_USER || 'postgres'}</span>
                   </div>
                 </div>
               </div>

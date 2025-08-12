@@ -57,18 +57,18 @@ export default function RolePermissionsPage() {
   };
   
   return (
-    <PermissionGuard permission={Permission.MANAGE_USERS} fallback={<div>You don't have permission to access this page</div>}>
+    <PermissionGuard permission={Permission.MANAGE_PERMISSIONS} fallback={<div>You don't have permission to access this page</div>}>
       <div>
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900">Role Permissions</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Role Permissions</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             Manage permissions for different user roles
           </p>
         </div>
         
         <Card>
           <div className="mb-6">
-            <h2 className="text-lg font-medium mb-2">Select Role</h2>
+            <h2 className="text-lg font-medium mb-2 text-gray-900 dark:text-white">Select Role</h2>
             <div className="flex space-x-4">
               <Button 
                 onClick={() => handleRoleChange('ADMIN')}
@@ -98,7 +98,7 @@ export default function RolePermissionsPage() {
           </div>
           
           <div>
-            <h2 className="text-lg font-medium mb-4">Permissions for {selectedRole}</h2>
+            <h2 className="text-lg font-medium mb-4 text-gray-900 dark:text-white">Permissions for {selectedRole}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {allPermissions.map(permission => (
                 <div key={permission} className="flex items-center">
@@ -109,7 +109,7 @@ export default function RolePermissionsPage() {
                     onChange={() => togglePermission(permission)}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label htmlFor={permission} className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor={permission} className="ml-2 block text-sm text-gray-900 dark:text-white">
                     {permission}
                   </label>
                 </div>

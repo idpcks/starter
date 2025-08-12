@@ -13,7 +13,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((
   return (
     <div className={`${fullWidth ? 'w-full' : ''} mb-4`}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           {label}
         </label>
       )}
@@ -22,9 +22,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>((
         className={`
           block px-3 py-2 rounded-md border shadow-sm 
           focus:border-blue-500 focus:ring-blue-500 focus:ring-1 focus:outline-none
-          text-gray-900 placeholder-gray-500 bg-white
+          text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-700
           sm:text-sm transition-colors duration-200
-          ${error ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300'}
+          ${error ? 'border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 dark:border-gray-600'}
           ${fullWidth ? 'w-full' : ''}
           ${className}
         `}

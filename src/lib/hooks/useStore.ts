@@ -8,6 +8,9 @@ interface AppState {
   toggleSidebar: () => void;
   
   // Theme state
+  themeMode: 'auto' | 'light' | 'dark';
+  setThemeMode: (mode: 'auto' | 'light' | 'dark') => void;
+  // Legacy support
   darkMode: boolean;
   toggleDarkMode: () => void;
   
@@ -26,8 +29,14 @@ export const useStore = create<AppState>((set) => ({
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
   
   // Theme state
+  themeMode: 'auto',
+  setThemeMode: (mode) => set({ themeMode: mode }),
+  // Legacy support - computed based on themeMode
   darkMode: false,
-  toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
+  toggleDarkMode: () => set((state) => ({ 
+    themeMode: state.themeMode === 'dark' ? 'light' : 'dark',
+    darkMode: state.themeMode !== 'dark'
+  })),
   
   // User management state
   users: [],
