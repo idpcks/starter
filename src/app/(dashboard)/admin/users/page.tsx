@@ -40,6 +40,7 @@ export default function UsersPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const { t } = useLanguage();
+  const [isMounted, setIsMounted] = useState(false);
   
   usePageTitle({ pageTitle: 'Admin Users' });
   const [users, setUsers] = useState<User[]>([]);
@@ -60,6 +61,7 @@ export default function UsersPage() {
   });
 
   useEffect(() => {
+    setIsMounted(true);
     loadUsers();
   }, [pagination.page]);
 
@@ -227,6 +229,15 @@ export default function UsersPage() {
       )
     }
   ];
+
+  // Prevent hydration mismatch by not rendering translated content until mounted
+  if (!isMounted) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   if (!session) {
     return (

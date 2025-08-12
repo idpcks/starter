@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Permission } from '@/types/permission';
 import { Role } from '@/types/auth';
 import Card from '@/components/ui/Card';
@@ -16,10 +16,13 @@ export default function AdminPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { t } = useLanguage();
+  const [isMounted, setIsMounted] = useState(false);
   
   usePageTitle({ pageTitle: 'Admin' });
   
   useEffect(() => {
+    setIsMounted(true);
+    
     if (status === 'loading') return;
     
     if (!session) {
@@ -34,10 +37,11 @@ export default function AdminPage() {
     }
   }, [session, status, router]);
   
-  if (status === 'loading') {
+  // Prevent hydration mismatch by not rendering translated content until mounted
+  if (!isMounted || status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">{t('loading')}</div>
+        <div className="text-lg">Loading...</div>
       </div>
     );
   }

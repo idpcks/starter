@@ -30,8 +30,10 @@ export default function DatabasePage() {
   const [status, setStatus] = useState<DatabaseStatus | null>(null);
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     checkDatabaseStatus();
   }, []);
 
@@ -75,6 +77,15 @@ export default function DatabasePage() {
       setInitializing(false);
     }
   };
+
+  // Prevent hydration mismatch by not rendering translated content until mounted
+  if (!isMounted) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   if (!session) {
     return (
