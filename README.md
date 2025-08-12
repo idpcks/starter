@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NextJS Starter Kit
 
-## Getting Started
+Sebuah starter kit lengkap untuk aplikasi NextJS dengan fitur autentikasi, dashboard, manajemen pengguna, dan banyak lagi.
 
-First, run the development server:
+## Fitur
+
+- 🔐 Autentikasi dengan NextAuth.js
+- 👤 Manajemen pengguna dan peran
+- 📊 Dashboard interaktif
+- 🖥️ Profil pengguna
+- ⚙️ Halaman pengaturan
+- 🎨 UI yang responsif dengan Tailwind CSS
+- 🔔 Notifikasi dengan React Toastify
+- 📱 Layout dengan sidebar dan navbar
+- 🔄 Navigasi tanpa reload halaman (SPA)
+
+## Teknologi yang Digunakan
+
+- [Next.js](https://nextjs.org/) - Framework React untuk produksi
+- [TypeScript](https://www.typescriptlang.org/) - JavaScript dengan sintaks tipe
+- [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utility-first
+- [NextAuth.js](https://next-auth.js.org/) - Autentikasi untuk Next.js
+- [React Toastify](https://fkhadra.github.io/react-toastify/) - Notifikasi toast
+- [React Icons](https://react-icons.github.io/react-icons/) - Ikon populer untuk React
+- [Zustand](https://github.com/pmndrs/zustand) - Manajemen state
+- [Headless UI](https://headlessui.dev/) - Komponen UI yang dapat diakses
+
+## Memulai
+
+### Prasyarat
+
+- Node.js 18.0.0 atau lebih baru
+- npm atau yarn
+
+### Instalasi
+
+1. Clone repositori ini
+
+```bash
+git clone https://github.com/yourusername/nextjs-starter.git
+cd nextjs-starter
+```
+
+2. Instal dependensi
+
+```bash
+npm install
+# atau
+yarn install
+```
+
+3. Salin file `.env.local.example` ke `.env.local` dan sesuaikan variabel lingkungan
+
+```bash
+cp .env.local.example .env.local
+```
+
+4. Jalankan server pengembangan
 
 ```bash
 npm run dev
-# or
+# atau
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Buka [http://localhost:3000](http://localhost:3000) di browser Anda
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Struktur Folder
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+├── public/             # Aset statis
+├── src/
+│   ├── app/            # Rute aplikasi
+│   │   ├── (auth)/     # Halaman autentikasi
+│   │   ├── (dashboard)/ # Halaman dashboard
+│   │   └── api/        # API routes
+│   ├── components/     # Komponen React
+│   │   ├── layout/     # Komponen layout
+│   │   └── ui/         # Komponen UI
+│   ├── lib/            # Utilitas dan konfigurasi
+│   │   ├── auth/       # Konfigurasi autentikasi
+│   │   └── hooks/      # Custom hooks
+│   ├── types/          # Definisi tipe TypeScript
+│   └── utils/          # Fungsi utilitas
+├── .env.local          # Variabel lingkungan lokal
+└── next.config.js      # Konfigurasi Next.js
+```
 
-## Learn More
+## Kredensial Demo
 
-To learn more about Next.js, take a look at the following resources:
+- **Admin:**
+  - Email: admin@example.com
+  - Password: password123
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **User:**
+  - Email: user@example.com
+  - Password: password123
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Lisensi
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE](LICENSE) untuk detailnya.
